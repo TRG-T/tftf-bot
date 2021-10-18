@@ -1,11 +1,13 @@
 const { latin, galactic } = require("./../utils/alphabets.js")
 const { MessageActionRow, MessageButton } = require("discord.js")
+const { SlashCommandBuilder } = require("@discordjs/builders")
 
-module.exports = (client) = {
-    name : `translate`,
-    description : `translate latin alphabet to galactic`,
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName("translate")
+        .setDescription("translate"),
 
-    execute(message, args, furtherArgs) {
+    async execute(client, interaction) {
         let translatedText = [];
         const translateLetter = (letter, method) => (
             method === "togalactic" 
@@ -26,11 +28,12 @@ module.exports = (client) = {
                 .setStyle("PRIMARY")
         )
 
-        message.reply({
-            content: "which side?",
+        interaction.reply({
+            content: " in which side?",
             components: [row],
             ephemeral: true,
         })
+
 
         // if (args[1] === "togalactic") {
         //     for(let i=0; i<=furtherArgs.length-1; i++) {
