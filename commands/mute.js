@@ -36,10 +36,8 @@ module.exports = (client) = {
 
         if (muteRole === undefined) {
             guild.roles.create({
-                data: {
-                    name: "Muted",
-                    color: "GRAY",
-                },
+                name: "Muted",
+                color: "BLUE",
                 reason: `You need "Muted" role for this bot to work`
             })
                 .catch(console.error)

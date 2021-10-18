@@ -14,21 +14,22 @@ module.exports = (client) = {
         )
 
         const row = new MessageActionRow().addComponents(
-                new MessageButton()
-                    .setCustomId("to-galactic")
-                    .setEmoji('✨')
-                    .setLabel("To galactic")
-                    .setStyle("PRIMARY"),
-                new MessageButton()
-                    .setCustomId("to-latin")
-                    .setEmoji('✨')
-                    .setLabel("To latin")
-                    .setStyle("PRIMARY")
-            )
+            new MessageButton()
+                .setCustomId("to-galactic")
+                .setEmoji('✨')
+                .setLabel("To galactic")
+                .setStyle("PRIMARY"),
+            new MessageButton()
+                .setCustomId("to-latin")
+                .setEmoji('✨')
+                .setLabel("To latin")
+                .setStyle("PRIMARY")
+        )
 
-        message.channel.send({
+        message.reply({
             content: "which side?",
-            components: [row]
+            components: [row],
+            ephemeral: true,
         })
 
         // if (args[1] === "togalactic") {
@@ -45,5 +46,6 @@ module.exports = (client) = {
         //     }
         // }
         // message.reply(translatedText.join(""))
+
     }
 }
