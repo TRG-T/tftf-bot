@@ -52,7 +52,6 @@ module.exports = client => {
 
             try {
                 cmd.execute(client, interaction)
-                interaction.delete()    
             } catch (error) {
                 console.log(error)
                 interaction.reply({ content: `I could not execute the ${cmd} command <:Sadge:869242274813468763>`, ephemeral: true });
