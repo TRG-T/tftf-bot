@@ -1,5 +1,5 @@
 const { latin, galactic } = require("./../utils/alphabets.js")
-const { MessageActionRow, MessageButton, ButtonInteraction } = require("discord.js")
+const { MessageActionRow, MessageButton } = require("discord.js")
 const { SlashCommandBuilder } = require("@discordjs/builders")
 
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
         let translatedText = [];
         const text = interaction.options.getString('text');
         const translateLetter = (letter, method) => (
-            method === "togalactic" 
+            method === "toGalactic" 
             ? galactic[latin.indexOf(letter)] 
             : latin[galactic.indexOf(letter)]
         )
@@ -40,15 +40,15 @@ module.exports = {
             if(button.customId === "to-galactic") {
                 for(let i=0; i<=text.length-1; i++) {
                     text[i].search(/[a-zA-Z]/g) === 0
-                    ? translatedText.push(translateLetter(text[i], "togalactic"))
+                    ? translatedText.push(translateLetter(text[i], "toGalactic"))
                     : translatedText.push(text[i])
                 }
                 interaction.followUp({ content: translatedText.join("") })
             } else {
                 for(let i=0; i<=text.length-1; i++) {
-                    text[i].search(/[a-zA-Z]/g) === 0
-                    ? translatedText.push(translateLetter(text[i], "toalphabet"))
-                    : translatedText.push(" ") 
+                    text[i].search(/[!?@#$%^&*()_+=.'", ]/g) === 0
+                    ? translatedText.push(text[i])
+                    : translatedText.push(translateLetter(text[i], "toAlphabet"))
                 }
                 interaction.followUp({ content: translatedText.join("") })
             }

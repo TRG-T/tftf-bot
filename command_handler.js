@@ -5,6 +5,9 @@ const { Routes } = require('discord-api-types/v9');
 const table = require("cli-table3")
 require("dotenv").config();
 
+const rest = new REST({ version: '9' }).setToken(process.env.D_TOKEN);
+const clientId = "744645938982944798"
+const guildId = "868440999020613653";
 const commandsTable = new table({
     head: ['command', 'found?'],
     colWidths: [15, 8]
@@ -22,25 +25,18 @@ module.exports = client => {
             commands.push(command.data.toJSON());
             client.command.set(command.data.name, command)
         } else {
-            commandsTable.push([file, `❌ -> missing name!`])
+            commandsTable.push([file, `❌`]) // missing command data
             continue
         }
     }
-    console.log(commandsTable.toString())
-    const rest = new REST({ version: '9' }).setToken(process.env.D_TOKEN);
-    const clientId = "744645938982944798"
-    const guildId = "868440999020613653";
+    console.log(commandsTable.toString());
 
     (async () => {
         try {
-            console.log('Started refreshing application (/) commands.');
-    
             await rest.put(
                 Routes.applicationGuildCommands(clientId, guildId),
                 { body: commands },
             );
-    
-            console.log('Successfully reloaded application (/) commands.');
         } catch (error) {
             console.error(error);
         }
@@ -54,7 +50,10 @@ module.exports = client => {
                 cmd.execute(client, interaction)
             } catch (error) {
                 console.log(error)
-                interaction.reply({ content: `I could not execute the ${cmd} command <:Sadge:869242274813468763>`, ephemeral: true });
+                interaction.reply({ 
+                    content: `I could not execute the ${cmd} command <:Sadge:869242274813468763>`, 
+                    ephemeral: true 
+                });
             }
         }
     });
