@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Servers {
-  id        BigInt      @id
+  id        BigInt   @id
   name      String   @db.VarChar(100)
   createdAt DateTime @default(now())
 }

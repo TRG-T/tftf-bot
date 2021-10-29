@@ -12,34 +12,31 @@ const client = new Client({
 commandHandler(client);
 
 client.once("ready", () => {
-    client.user.setActivity("!info", { type: "PLAYING" });
+    client.user.setActivity("/info", { type: "PLAYING" });
     console.log(chalk.green(`${client.user.tag} working!`));
 
-    console.log("I belong to:");
+    console.log(`I added these servers to DB:`)
     client.guilds.cache.forEach(async(guild) => {
-        console.log(`${chalk.blue(guild.name)} | ${chalk.green(guild.id)}`);
-        // await prisma.servers.create({
-        //     data: {
-        //         id: Number(guild.id),
-        //         name: guild.name,  
-        //     },
-        // })
+        const allServers = await prisma.servers.findMany({
+            select: { name: true }
+        })
+        let server = allServers.filter(x => x.name == guild.name)
+        !server[0] && 
+            await prisma.servers.create({
+                data: {
+                    id: BigInt(guild.id),
+                    name: guild.name,  
+                },
+            })
+            console.log(`${chalk.blue(guild.name)} | ${chalk.green(guild.id)}`)
     });
 });
 
 const main = async () => {
-    const allServers = await prisma.servers.findMany({
-        select: { name: true }
-    })
-    console.log(allServers)
 }
 
 main()
-  .catch((e) => {
-    throw e
-})
-  .finally(async () => {
-    await prisma.$disconnect()
-})
+    .catch((e) => { throw e })
+    .finally(async () => { await prisma.$disconnect() })
 
 client.login(process.env.D_TOKEN);
