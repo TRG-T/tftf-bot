@@ -12,22 +12,16 @@ datasource db {
 
 model Servers {
   id        BigInt      @id
-  users     UsersOnServers?
+  users     Users[]
   name      String      @db.VarChar(100)
   createdAt DateTime    @default(now())
 }
 
-model UsersOnServers {
-    id       Int        @id @default(autoincrement())
-    server   Servers    @relation(fields: [serverId], references: [id])
-    serverId BigInt
-    user     Users      @relation(fields: [userId], references: [id])
-    userId   BigInt
-}
-
 model Users {
-  id        BigInt      @id
-  server    UsersOnServers?
+  id        Int         @id @default(autoincrement())
+  userId    BigInt
+  server    Servers     @relation(fields: [serverId], references: [id])
+  serverId  BigInt
   username  String      @db.VarChar(100)
   tag       String      @db.VarChar(5)
   isBot     Boolean
