@@ -6,7 +6,7 @@ require("dotenv").config();
 
 const prisma = new PrismaClient()
 const client = new Client({
-    intents: ["GUILDS", "GUILD_MESSAGES"],
+    intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"],
     allowedMentions: { parse: ["users", "roles"], repliedUser: true },
 });
 commandHandler(client);
@@ -14,23 +14,41 @@ commandHandler(client);
 client.once("ready", () => {
     client.user.setActivity("/info", { type: "PLAYING" });
     console.log(chalk.green(`${client.user.tag} working!`));
-
-    console.log(`I added these servers to DB:`)
-    client.guilds.cache.forEach(async(guild) => {
-        const allServers = await prisma.servers.findMany({
-            select: { name: true }
-        })
-        let server = allServers.filter(x => x.name == guild.name)
-        !server[0] && 
-            await prisma.servers.create({
-                data: {
-                    id: BigInt(guild.id),
-                    name: guild.name,  
-                },
-            })
-            console.log(`${chalk.blue(guild.name)} | ${chalk.green(guild.id)}`)
-    });
 });
+
+
+client.on("guildCreate", async guild => {
+    await prisma.servers.create({
+        data: {
+            id: BigInt(guild.id),
+            name: guild.name,  
+        },
+    })
+    guild.members.fetch()
+        .then((result) => { 
+            let guilds = result.map(guild => guild)
+            guilds.forEach(async guildMember => {
+                await prisma.users.create({
+                    data: {
+                        userId: BigInt(guildMember.user.id),
+                        username: encodeURI(guildMember.user.username),  
+                        tag: guildMember.user.discriminator,
+                        isBot: guildMember.user.bot,
+                        serverId: BigInt(guild.id)
+                    },
+                })
+            })
+        })
+})    
+
+client.on("guildDelete", async guild => {
+    await prisma.users.deleteMany({
+        where: { serverId: BigInt(guild.id) }
+    })
+    await prisma.servers.delete({
+        where: { id: BigInt(guild.id) }
+    })
+})
 
 const main = async () => {
 }
