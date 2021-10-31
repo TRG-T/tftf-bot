@@ -24,7 +24,7 @@ model Users {
   serverId  BigInt
   username  String      @db.VarChar(100)
   tag       String      @db.VarChar(5)
-  warns     Int         @db.SmallInt
+  warns     Int         @db.SmallInt @default(0)
   isBot     Boolean
   createdAt DateTime    @default(now())
 }
