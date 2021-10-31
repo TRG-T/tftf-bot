@@ -13,20 +13,21 @@ module.exports = client = {
     async execute(client, interaction) {
         const mention = interaction.options.getUser('user');
         const reason = interaction.options.getString('reason');
+        const user = await prisma.users.findFirst({
+            where: { serverId: BigInt(interaction.guildId), userId: BigInt(mention.id) }
+        })
         const warnReply = new MessageEmbed()
             .setColor(`#ffffff`)
-            .setThumbnail(user.avatarURL())
+            .setThumbnail(mention.avatarURL())
             .setTitle(`Warned`)
-            .setDescription(`${user.username} warned \n reason: ${reason}`)
+            .setDescription(`${mention.username} warned`)
+            .setFields({ name: "Reason", value: reason })
             .setFooter(interaction.user.tag, interaction.user.displayAvatarURL())
 
         interaction.reply({ 
             embeds: [warnReply], 
         })
 
-        const user = await prisma.users.findFirst({
-            where: { serverId: BigInt(interaction.guildId), userId: BigInt(mention.id) }
-        })
         await prisma.users.update({
             where: { id: user.id },
             data: { warns: user.warns += 1 },

@@ -50,6 +50,28 @@ client.on("guildDelete", async guild => {
     })
 })
 
+
+client.on("guildMemberAdd", async member => {
+    await prisma.users.create({
+        data: {
+            userId: BigInt(member.id),
+            username: encodeURI(member.user.username),  
+            tag: member.user.discriminator,
+            isBot: member.user.bot,
+            serverId: BigInt(member.guild.id)
+        },
+    })
+})
+
+client.on("guildMemberRemove", async member => {
+    await prisma.users.deleteMany({
+        where: { 
+            serverId: BigInt(member.guild.id), 
+            userId: BigInt(member.id)
+        }
+    })
+})
+
 const main = async () => {
 }
 
